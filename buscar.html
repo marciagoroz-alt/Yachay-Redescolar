@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador YACHAY | Red Escolar</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* CORRECCIÓN DE COLORES Y DISEÑO */
+        .header-busqueda {
+            background-color: #fcfcfc; /* Fondo casi blanco */
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 3px solid #b23a48;
+        }
+        
+        /* Forzamos que los títulos sean oscuros para que se lean */
+        .header-busqueda h1 {
+            color: #202124 !important; 
+            margin-bottom: 10px;
+        }
+        
+        .header-busqueda p {
+            color: #5f6368 !important;
+            font-size: 1.1rem;
+        }
+
+        .caja-busqueda {
+            margin-top: 25px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #inputBusqueda {
+            width: 100%;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            border: 2px solid #b23a48; /* Borde de color de la marca */
+            border-radius: 30px;
+            outline: none;
+            background-color: white;
+            color: #333;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .resultados-info {
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            color: #b23a48;
+            height: 20px; /* Espacio reservado para que no salte el contenido */
+        }
+
+        .nav-regresar {
+            padding: 15px;
+            background: #fff;
+        }
+        
+        .nav-regresar a {
+            text-decoration: none;
+            color: #b23a48;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-regresar">
+        <a href="index.html">← VOLVER AL INICIO</a>
+    </nav>
+
+    <header class="header-busqueda">
+        <h1>Buscador Comunitario</h1>
+        <p>Escribí el autor, el año o el material que necesitás.</p>
+        
+        <div class="caja-busqueda">
+            <input type="text" id="inputBusqueda" placeholder="Ej: Estrada, 5to año, Guardapolvo..." onkeyup="filtrarMateriales()">
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="resultados-conteo" class="resultados-info"></div>
+        
+        <div id="contenedor-materiales" class="grid-materiales">
+            </div>
+    </main>
+
+    <script src="script.js"></script>
+
+    <script>
+        function filtrarMateriales() {
+            const texto = document.getElementById('inputBusqueda').value.toLowerCase();
+            const tarjetas = document.querySelectorAll('.tarjeta-material');
+            let visibles = 0;
+
+            tarjetas.forEach(tarjeta => {
+                const contenido = tarjeta.innerText.toLowerCase();
+                
+                if (contenido.includes(texto)) {
+                    tarjeta.style.display = "block";
+                    visibles++;
+                } else {
+                    tarjeta.style.display = "none";
+                }
+            });
+
+            const conteo = document.getElementById('resultados-conteo');
+            if (texto === "") {
+                conteo.innerText = "Mostrando todo el catálogo";
+            } else {
+                conteo.innerText = `Se encontraron ${visibles} resultados`;
+            }
+        }
+    </script>
+</body>
+</html>

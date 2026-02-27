@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicar Material - YACHAY</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>YACHAY | Red Escolar</h1>
+        <nav><a href="index.html" class="boton secundario">Volver al Inicio</a></nav>
+    </header>
+
+    <main class="container">
+        <h2>Publicar nuevo material</h2>
+        <p class="subtitulo">Completá los datos para que tu material circule en la comunidad.</p>
+        
+        <form id="uploadForm">
+            <label>Título del material:</label>
+            <input type="text" name="titulo" placeholder="Ej: Manual de 4to grado" required>
+
+            <label>Categoría del material:</label>
+<select name="categoria" required>
+    <option value="" disabled selected>Seleccioná una categoría</option>
+    <option value="Manuales escolares">Manuales escolares</option>
+    <option value="Libros de lectura">Libros de lectura</option>
+    <option value="Material técnico">Material técnico</option>
+    <option value="Uniformes escolares">Uniformes escolares</option>
+    <option value="Otros insumos educativos">Otros insumos educativos</option>
+</select>
+
+            <label>Descripción:</label>
+            <textarea name="descripcion" placeholder="Detallá el estado del producto..." required></textarea>
+
+            <div class="checkbox-group">
+                <input type="checkbox" name="es_donacion" id="es_donacion" onchange="togglePrecio(this)">
+                <label for="es_donacion">Es una donación (Gratis)</label>
+            </div>
+
+            <label id="label_precio">Precio (ARS):</label>
+            <input type="number" name="precio" id="precio_input" placeholder="Monto en pesos">
+
+            <label>Contacto (WhatsApp/Email):</label>
+            <input type="text" name="contacto" placeholder="Tu forma de contacto" required>
+
+            <label>Foto del material:</label>
+            <input type="file" name="foto_archivo" id="foto_archivo" accept="image/*" required>
+
+            <button type="submit" id="submitBtn" class="btn-militante">Publicar Material</button>
+        </form>
+
+        <div id="mensaje_final" style="display:none;" class="destacado">
+            Enviando publicación... por favor esperá.
+        </div>
+    </main>
+
+    <script>
+        // Lógica para poner precio 0 si es donación
+        function togglePrecio(checkbox) {
+            const precioInput = document.getElementById('precio_input');
+            if (checkbox.checked) {
+                precioInput.value = 0;
+                precioInput.readOnly = true;
+                precioInput.style.backgroundColor = "#eee";
+            } else {
+                precioInput.value = "";
+                precioInput.readOnly = false;
+                precioInput.style.backgroundColor = "#fff";
+            }
+        }
+
+        // Script para enviar el formulario con la imagen
+        const form = document.getElementById('uploadForm');
+        form.onsubmit = e => {
+            e.preventDefault();
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('mensaje_final').style.display = 'block';
+
+            const fr = new FileReader();
+            const file = document.getElementById('foto_archivo').files[0];
+            
+            fr.onload = function(e) {
+                const obj = {
+                    filename: file.name,
+                    mimeType: file.type,
+                    base64: e.target.result.split(',')[1],
+                    titulo: form.titulo.value,
+                    categoria: form.categoria.value,
+                    descripcion: form.descripcion.value,
+                    precio: form.precio.value,
+                    es_donacion: form.es_donacion.checked ? "SÍ" : "NO",
+                    contacto: form.contacto.value
+                };
+
+                // REEMPLAZAR ABAJO CON TU URL DE APPS SCRIPT
+                fetch('https://script.google.com/macros/s/AKfycbwuGaYWvNxC-R0yurEvrUGIfe-KbotlQ5KxpBLrnIW77zBCY9nnd9cI1jdBb2uRBuQ6/exec', {
+                    method: 'POST',
+                    body: JSON.stringify(obj)
+                })
+                .then(res => res.text())
+                .then(txt => {
+                    document.body.innerHTML = `<div class="container destacado"><h2>${txt}</h2><br><a href="index.html" class="boton">Volver</a></div>`;
+                })
+                .catch(err => alert("Error: " + err));
+            };
+            fr.readAsDataURL(file);
+        };
+    </script>
+</body>
+</html>
