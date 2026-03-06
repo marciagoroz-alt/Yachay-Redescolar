@@ -127,8 +127,4 @@ function irArriba() {
 }
 
 document.addEventListener('DOMContentLoaded', cargarMateriales);
-    }
-}
 
-
-document.addEventListener('DOMContentLoaded', cargarMateriales);
