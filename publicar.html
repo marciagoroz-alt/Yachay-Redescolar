@@ -1,111 +1,416 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Publicar Material - YACHAY</title>
-    <link rel="stylesheet" href="styles.css">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Publicar Material - YACHAY</title>
+
+<link rel="stylesheet" href="styles.css">
+
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="shortcut icon" href="favicon.ico">
+<style>
+
+.container{
+max-width:700px;
+margin:auto;
+padding:20px;
+}
+
+label{
+display:block;
+margin-top:15px;
+font-weight:bold;
+}
+
+input, textarea, select{
+width:100%;
+padding:10px;
+margin-top:5px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+.checkbox-group{
+margin-top:20px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.btn-militante{
+margin-top:25px;
+padding:12px;
+font-size:16px;
+background:#0a7d5a;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.spinner{
+width:40px;
+height:40px;
+border:5px solid #eee;
+border-top:5px solid #0a7d5a;
+border-radius:50%;
+animation:spin 1s linear infinite;
+margin:auto;
+}
+
+@keyframes spin{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
+}
+
+#preview_fotos img{
+width:80px;
+height:80px;
+object-fit:cover;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+</style>
+
 </head>
+
 <body>
-    <header>
-        <h1>YACHAY | Red Escolar</h1>
-        <nav><a href="index.html" class="boton secundario">Volver al Inicio</a></nav>
-    </header>
 
-    <main class="container">
-        <h2>Publicar nuevo material</h2>
-        <p class="subtitulo">Completá los datos para que tu material circule en la comunidad.</p>
-        
-        <form id="uploadForm">
-            <label>Título del material:</label>
-            <input type="text" name="titulo" placeholder="Ej: Manual de 4to grado" required>
+<header>
+<h1>YACHAY | Red Escolar</h1>
+<nav>
+<a href="index.html">Volver al Inicio</a>
+</nav>
+</header>
 
-            <label>Categoría del material:</label>
+<main class="container">
+
+<h2>Publicar nuevo material</h2>
+<p>Completá los datos para que tu material circule en la comunidad.</p>
+
+<form id="uploadForm">
+
+<label>Título del material</label>
+<input type="text" name="titulo" required placeholder="Ej: Manual de 4to grado">
+
+<label>Categoría</label>
 <select name="categoria" required>
-    <option value="" disabled selected>Seleccioná una categoría</option>
-    <option value="Manuales escolares">Manuales escolares</option>
-    <option value="Libros de lectura">Libros de lectura</option>
-    <option value="Material técnico">Material técnico</option>
-    <option value="Uniformes escolares">Uniformes escolares</option>
-    <option value="Otros insumos educativos">Otros insumos educativos</option>
+<option value="" disabled selected>Seleccioná una categoría</option>
+<option value="Manuales escolares">Manuales escolares</option>
+<option value="Libros de lectura">Libros de lectura</option>
+<option value="Material técnico">Material técnico</option>
+<option value="Uniformes escolares">Uniformes escolares</option>
+<option value="Otros insumos educativos">Otros insumos educativos</option>
 </select>
 
-            <label>Descripción:</label>
-            <textarea name="descripcion" placeholder="Detallá el estado del producto..." required></textarea>
+<label>Descripción</label>
+<textarea name="descripcion" required placeholder="Detallá el estado del material"></textarea>
 
-            <div class="checkbox-group">
-                <input type="checkbox" name="es_donacion" id="es_donacion" onchange="togglePrecio(this)">
-                <label for="es_donacion">Es una donación (Gratis)</label>
-            </div>
+<div class="checkbox-group">
+<input type="checkbox" id="es_donacion" name="es_donacion" onchange="togglePrecio(this)">
+<label for="es_donacion">Es una donación (Gratis)</label>
+</div>
 
-            <label id="label_precio">Precio (ARS):</label>
-            <input type="number" name="precio" id="precio_input" placeholder="Monto en pesos">
+<label id="label_precio">Precio (ARS)</label>
+<input type="number" id="precio_input" name="precio" placeholder="Monto en pesos" required>
 
-            <label>Contacto (WhatsApp/Email):</label>
-            <input type="text" name="contacto" placeholder="Tu forma de contacto" required>
+<label>Contacto (WhatsApp o Email)</label>
+<input type="text" name="contacto" placeholder="Ej: 549336... o mail@ejemplo.com" required>
 
-            <label>Foto del material:</label>
-            <input type="file" name="foto_archivo" id="foto_archivo" accept="image/*" required>
+<label>Fotos del material (máximo 3)</label>
+<input type="file" id="foto_archivo" accept="image/*" multiple required>
 
-            <button type="submit" id="submitBtn" class="btn-militante">Publicar Material</button>
-        </form>
+<div id="preview_fotos" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px"></div>
 
-        <div id="mensaje_final" style="display:none;" class="destacado">
-            Enviando publicación... por favor esperá.
-        </div>
-    </main>
+<button type="submit" id="submitBtn" class="btn-militante">
+Publicar material
+</button>
 
-    <script>
-        // Lógica para poner precio 0 si es donación
-        function togglePrecio(checkbox) {
-            const precioInput = document.getElementById('precio_input');
-            if (checkbox.checked) {
-                precioInput.value = 0;
-                precioInput.readOnly = true;
-                precioInput.style.backgroundColor = "#eee";
-            } else {
-                precioInput.value = "";
-                precioInput.readOnly = false;
-                precioInput.style.backgroundColor = "#fff";
-            }
-        }
+</form>
 
-        // Script para enviar el formulario con la imagen
-        const form = document.getElementById('uploadForm');
-        form.onsubmit = e => {
-            e.preventDefault();
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('mensaje_final').style.display = 'block';
+<div id="mensaje_final" style="display:none;text-align:center;margin-top:40px">
+<div class="spinner"></div>
+<p>Subiendo material a la Red YACHAY...</p>
+</div>
 
-            const fr = new FileReader();
-            const file = document.getElementById('foto_archivo').files[0];
-            
-            fr.onload = function(e) {
-                const obj = {
-                    filename: file.name,
-                    mimeType: file.type,
-                    base64: e.target.result.split(',')[1],
-                    titulo: form.titulo.value,
-                    categoria: form.categoria.value,
-                    descripcion: form.descripcion.value,
-                    precio: form.precio.value,
-                    es_donacion: form.es_donacion.checked ? "SÍ" : "NO",
-                    contacto: form.contacto.value
-                };
+</main>
 
-                // REEMPLAZAR ABAJO CON TU URL DE APPS SCRIPT
-                fetch('https://script.google.com/macros/s/AKfycbwuGaYWvNxC-R0yurEvrUGIfe-KbotlQ5KxpBLrnIW77zBCY9nnd9cI1jdBb2uRBuQ6/exec', {
-                    method: 'POST',
-                    body: JSON.stringify(obj)
-                })
-                .then(res => res.text())
-                .then(txt => {
-                    document.body.innerHTML = `<div class="container destacado"><h2>${txt}</h2><br><a href="index.html" class="boton">Volver</a></div>`;
-                })
-                .catch(err => alert("Error: " + err));
-            };
-            fr.readAsDataURL(file);
-        };
-    </script>
+<script>
+
+/* DONACIÓN */
+
+function togglePrecio(checkbox){
+
+const precioInput = document.getElementById('precio_input')
+
+if(checkbox.checked){
+
+precioInput.value = 0
+precioInput.readOnly = true
+precioInput.required = false
+precioInput.style.backgroundColor="#eee"
+
+}else{
+
+precioInput.value=""
+precioInput.readOnly=false
+precioInput.required=true
+precioInput.style.backgroundColor="#fff"
+
+}
+
+/* PREVIEW FOTOS */
+
+const inputFotos = document.getElementById("foto_archivo")
+const preview = document.getElementById("preview_fotos")
+
+inputFotos.addEventListener("change",()=>{
+
+if(inputFotos.files.length>3){
+
+alert("Solo podés subir hasta 3 fotos")
+
+inputFotos.value=""
+preview.innerHTML=""
+
+return
+
+}
+
+preview.innerHTML=""
+
+Array.from(inputFotos.files).forEach(file=>{
+
+const reader = new FileReader()
+
+reader.onload=e=>{
+
+const img=document.createElement("img")
+
+img.src=e.target.result
+
+preview.appendChild(img)
+
+}
+
+reader.readAsDataURL(file)
+
+})
+
+})
+
+/* ENVÍO FORM */
+
+const form = document.getElementById("uploadForm")
+
+form.onsubmit = async (e)=>{
+
+e.preventDefault()
+
+const contactoRaw = form.contacto.value.trim()
+
+let contactoFinal=""
+
+let esEmail = contactoRaw.includes("@")
+
+if(esEmail){
+
+const regexEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+if(!regexEmail.test(contactoRaw)){
+
+alert("Ingresá un email válido")
+
+return
+
+}
+
+contactoFinal=contactoRaw
+
+}else{
+
+contactoFinal = contactoRaw.replace(/\D/g,'')
+
+if(contactoFinal.length<10){
+
+alert("Ingresá un número de WhatsApp válido")
+
+return
+
+}
+
+}
+
+/* BLOQUEO */
+
+document.getElementById("submitBtn").disabled=true
+document.getElementById("mensaje_final").style.display="block"
+
+/* PROCESAR FOTOS */
+
+const files = document.getElementById("foto_archivo").files
+
+const promesasFotos = Array.from(files).map(file=>{
+
+return new Promise(resolve=>{
+
+const fr = new FileReader()
+
+fr.onload = e => resolve({
+
+filename:file.name,
+mimeType:file.type,
+base64:e.target.result.split(',')[1]
+
+})
+
+fr.readAsDataURL(file)
+
+})
+
+})
+
+try{
+
+const listaFotos = await Promise.all(promesasFotos)
+// Guardamos los datos para poder recuperarlos si el usuario vuelve
+sessionStorage.setItem("form_yachay", JSON.stringify({
+titulo: form.titulo.value,
+categoria: form.categoria.value,
+descripcion: form.descripcion.value,
+precio: form.precio.value,
+contacto: contactoFinal,
+es_donacion: form.es_donacion.checked
+}));
+
+const obj={
+
+fotos:listaFotos,
+titulo:form.titulo.value,
+categoria:form.categoria.value,
+descripcion:form.descripcion.value,
+precio:form.precio.value,
+es_donacion:form.es_donacion.checked ? "SI":"NO",
+contacto:contactoFinal
+
+}
+
+const respuesta = await fetch("https://script.google.com/macros/s/AKfycbzp3UfokFrEoCpO-oy48HfIab3Wveox0KV5PixlyBdAeS-iE1BTNfYREfjtvH5QnldK/exec",{
+
+method:"POST",
+body:JSON.stringify(obj)
+
+})
+
+const data = await respuesta.json()
+
+const idPublicacion = data.id || "pendiente"
+
+/* PANTALLA FINAL */
+
+document.querySelector("main").innerHTML = `
+
+<div class="container" style="text-align:center">
+
+<h2>✔ Material cargado en Yachay</h2>
+
+<p><b>ID de publicación:</b> ${idPublicacion}</p>
+
+<p style="margin-top:15px; font-size:14px; color:#555;">
+Guardá este ID de publicación y copialo cuando confirmes el contacto.
+</p>
+
+<p style="margin-top:20px; font-size:14px; color:#666;">
+Gracias por publicar en Yachay.<br>
+Tu aporte ayuda a que los útiles escolares circulen y lleguen
+a quienes los necesitan.
+</p>
+
+
+<p>Confirmá que tu contacto sea correcto antes de validar.</p>
+
+<p style="font-size:18px;margin-top:10px"><b>${contactoFinal}</b></p>
+
+<div class="confirmacion-contacto">
+<input type="checkbox" id="confirmarContacto">
+<label for="confirmarContacto">El contacto es correcto</label>
+</div>
+
+<button id="btnConfirmar" class="btn-militante" disabled>
+Confirmar y escribir a Yachay
+</button>
+
+<br><br>
+
+<p style="font-size:13px;color:#777">
+Si modificás el contacto deberás volver a subir las fotos del material.
+</p>
+
+<br>
+
+<button onclick="location.reload()"
+style="background:none;border:none;color:#555;text-decoration:underline;cursor:pointer">
+Modificar contacto
+</button>
+
+</div>
+`
+const check = document.getElementById("confirmarContacto")
+const btn = document.getElementById("btnConfirmar")
+
+check.addEventListener("change",()=>{
+btn.disabled=!check.checked
+})
+
+btn.onclick=()=>{
+
+const mensaje=encodeURIComponent(
+"Hola, publiqué material en Yachay.\n\n"+
+"Título: "+form.titulo.value+"\n"+
+"ID: "+idPublicacion+"\n"+
+"Contacto: "+contactoFinal
+)
+
+window.location.href="https://ig.me/m/yachay.li?text="+mensaje
+
+}
+
+}catch(error){
+
+alert("Hubo un error al subir el material")
+
+}
+
+}
+/* RECUPERAR DATOS SI EL USUARIO VUELVE */
+
+window.addEventListener("load", () => {
+
+const datosGuardados = sessionStorage.getItem("form_yachay")
+
+if(!datosGuardados) return
+
+const datos = JSON.parse(datosGuardados)
+
+form.titulo.value = datos.titulo || ""
+form.categoria.value = datos.categoria || ""
+form.descripcion.value = datos.descripcion || ""
+form.precio.value = datos.precio || ""
+form.contacto.value = datos.contacto || ""
+
+if(datos.es_donacion){
+document.getElementById("es_donacion").checked = true
+togglePrecio(document.getElementById("es_donacion"))
+}
+
+})
+
+
+</script>
+
 </body>
 </html>
